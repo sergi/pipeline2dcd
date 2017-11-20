@@ -1,8 +1,6 @@
 import picoModal from "picomodal";
 import jsyaml from "js-yaml";
 
-const SPINNAKER_URL = browser.storage.local.get("color");
-
 let SESSION, APP_NAME;
 
 // Helper function to select all text in a node
@@ -93,14 +91,17 @@ function convertNotifications(notifications) {
 // #endregion
 
 async function getYaml(session, pipelineName) {
-  const URL = await browser.storage.local.get("spinnakerDomain");
-  const url = `${URL.spinnakerDomain}/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
-  console.log(url);
+  const domain = await browser.storage.local.get("spinnakerDomain");
+  if (!domain.spinnakerDomain) {
+    return alert("Please configure the root domain in pipeline2YAML settings");
+  }
+
+  const url = `${domain.spinnakerDomain}/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
 
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
   xhr.withCredentials = true;
-  xhr.setRequestHeader("Cookie", `SESSION=${session}`);
+  // xhr.setRequestHeader("Cookie", `SESSION=${session}`);
+  xhr.open("GET", url, true);
   xhr.onreadystatechange = () => {
     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
       const finalJSON = convert(JSON.parse(xhr.responseText));

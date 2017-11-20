@@ -1,4 +1,6 @@
-require('webext-inject-on-install');
+// This file is no longer used. Kept here for educational purposes :P
+
+require("webext-inject-on-install");
 
 let SESSION;
 
@@ -19,7 +21,7 @@ function listener(details) {
   }
 
   const headers = details.requestHeaders;
-  for (header of headers) {
+  for (let header of headers) {
     if (
       header.name.toLowerCase() === "cookie" &&
       header.value.indexOf("SESSION") !== -1
