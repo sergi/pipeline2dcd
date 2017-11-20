@@ -107,7 +107,8 @@ async function getYaml(session, pipelineName) {
       const finalJSON = convert(JSON.parse(xhr.responseText));
       picoModal(
         `<pre class="yaml-box" contenteditable="true">${jsyaml.safeDump(
-          finalJSON
+          finalJSON,
+          { skipInvalid: true }
         )}</pre>`
       )
         .afterCreate(modal => {
