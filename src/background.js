@@ -1,3 +1,5 @@
+require('webext-inject-on-install');
+
 let SESSION;
 
 function getActiveTab() {
@@ -30,6 +32,7 @@ function listener(details) {
 
   return {};
 }
+
 chrome.webRequest.onBeforeSendHeaders.addListener(
   listener,
   // filters

@@ -1,0 +1,64 @@
+{
+  "scripts": {
+    "test": "xo && cross-env BABEL_ENV=testing ava && run-s build:minified",
+    "build": "webpack",
+    "build:minified": "cross-env NODE_ENV=production webpack",
+    "watch": "webpack --watch",
+    "release:amo": "cd extension && webext submit",
+    "release:cws": "cd extension && webstore upload --auto-publish",
+    "release": "run-s build:minified update-version release:*",
+    "update-version": "VERSION=$(date -u +%y.%-m.%-d.%-H%M); echo $VERSION; dot-json extension/manifest.json version $VERSION",
+    "can-release": "if [ \"$TRAVIS_EVENT_TYPE\" = cron ] && [ $(git rev-list -n 1 --since=\"26 hours ago\" master) ]; then echo :ship-it:; else false; fi"
+  },
+  "dependencies": {
+    "dom-chef": "^3.0.0",
+    "dom-loaded": "^1.0.0",
+    "element-ready": "^2.2.0",
+    "js-yaml": "^3.10.0",
+    "picomodal": "^3.0.0",
+    "webext-dynamic-content-scripts": "^3.0.0",
+    "webext-inject-on-install": "^1.0.2",
+    "webextension-polyfill": "^0.2.1"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-modern-browsers": "^10.0.1",
+    "chrome-webstore-upload-cli": "^1.0.0",
+    "common-tags": "^1.4.0",
+    "copy-webpack-plugin": "^4.2.0",
+    "cross-env": "^5.0.5",
+    "dot-json": "^1.0.3",
+    "npm-run-all": "^4.1.1",
+    "uglifyjs-webpack-plugin": "^1.1.0",
+    "web-ext": "^2.2.2",
+    "webpack": "^3.7.1"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "modern-browsers"
+    ],
+    "env": {
+      "testing": {
+        "plugins": [
+          "transform-es2015-modules-commonjs"
+        ]
+      }
+    }
+  }
+}

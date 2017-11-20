@@ -1,3 +1,8 @@
+import picoModal from "picomodal";
+import jsyaml from "js-yaml";
+
+const SPINNAKER_URL = browser.storage.local.get("color");
+
 let SESSION, APP_NAME;
 
 // Helper function to select all text in a node
@@ -87,8 +92,10 @@ function convertNotifications(notifications) {
 }
 // #endregion
 
-function getYaml(session, pipelineName) {
-  const url = `https://pipeline-api.schibsted.io/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
+async function getYaml(session, pipelineName) {
+  const URL = await browser.storage.local.get("spinnakerDomain");
+  const url = `${URL.spinnakerDomain}/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
+  console.log(url);
 
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
@@ -116,7 +123,7 @@ function getYaml(session, pipelineName) {
   xhr.send(null);
 }
 
-// Listen for bacground to give us the session ID
+// Listen for background to give us the session ID
 browser.runtime.onMessage.addListener(message => {
   if (message.session) {
     SESSION = message.session;

@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "pipeline2yaml",
+  "version": "1.0",
+
+  "description": "Converts JSON Spinnaker pipelines to DCD pipelines (https://github.com/spinnaker/dcd-spec)",
+
+  "permissions": [
+    "tabs",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "https://*.schibsted.io/*"
+  ],
+
+  "icons": {
+    "32": "noun_969470_cc_32.png",
+    "128": "noun_969470_cc_128.png"
+  },
+
+  "background": {
+    "scripts": ["browser-polyfill.min.js", "background.js"]
+  },
+
+  "options_ui": {
+    "page": "options.html"
+  },
+
+  "content_scripts": [
+    {
+      "run_at": "document_idle",
+      "matches": ["https://*.schibsted.io/*"],
+      "js": ["browser-polyfill.min.js", "content.js"]
+    }
+  ]
+}
