@@ -1,5 +1,8 @@
+import OptionsSync from "webext-options-sync";
 import picoModal from "picomodal";
 import jsyaml from "js-yaml";
+
+const options = new OptionsSync();
 
 let SESSION, APP_NAME;
 
@@ -91,38 +94,40 @@ function convertNotifications(notifications) {
 // #endregion
 
 async function getYaml(session, pipelineName) {
-  const domain = await browser.storage.local.get("spinnakerDomain");
-  if (!domain.spinnakerDomain) {
-    return alert("Please configure the root domain in pipeline2YAML settings");
+  const { customDomainOrigin } = await options.getAll();
+  if (!customDomainOrigin) {
+    return alert("Please configure the root domain in pipeline2dcd settings");
   }
 
-  const url = `${domain.spinnakerDomain}/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
+  const url = `${customDomainOrigin}/applications/${APP_NAME}/pipelineConfigs/${pipelineName}`;
 
-  const xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-  // xhr.setRequestHeader("Cookie", `SESSION=${session}`);
-  xhr.open("GET", url, true);
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-      const finalJSON = convert(JSON.parse(xhr.responseText));
-      picoModal(
-        `<pre class="yaml-box" contenteditable="true">${jsyaml.safeDump(
-          finalJSON,
-          { skipInvalid: true }
-        )}</pre>`
-      )
-        .afterCreate(modal => {
-          const yamlBox = modal
-            .modalElem()
-            .getElementsByClassName("yaml-box")[0];
+  try {
+    let response = await fetch(encodeURI(url), {
+      credentials: "include"
+    });
 
-          yamlBox.focus();
-          setTimeout(() => selectElementContents(yamlBox));
-        })
-        .show();
+    if (response.status !== 200) {
+      console.error("Problem getting pipeline JSON.");
     }
-  };
-  xhr.send(null);
+    const pipelineJSON = await response.json();
+    const finalJSON = convert(pipelineJSON);
+
+    picoModal(
+      `<pre class="yaml-box" contenteditable="true">${jsyaml.safeDump(
+        finalJSON,
+        { skipInvalid: true }
+      )}</pre>`
+    )
+      .afterCreate(modal => {
+        const yamlBox = modal.modalElem().getElementsByClassName("yaml-box")[0];
+
+        yamlBox.focus();
+        setTimeout(() => selectElementContents(yamlBox));
+      })
+      .show();
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 // Listen for background to give us the session ID

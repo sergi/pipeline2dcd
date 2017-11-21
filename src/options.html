@@ -1,22 +1,35 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Pipeline2YAML options</title>
+<title>Pipeline2DCD options</title>
 <style>
-	html {
-		font-family: sans-serif;
-	}
-	/* Increase spacing between sections */
-	h2 ~ h2,
-	form ~ form {
-		margin-top: 2em;
-	}
+    html {
+        font-family: sans-serif;
+    }
+
+    /* Increase spacing between sections */
+
+    h2~h2,
+    form~form {
+        margin-top: 2em;
+    }
+
+    input:invalid {
+        color: red;
+        border: 1px solid red;
+    }
+
+    /* Or display a custom error message */
+
+    input:invalid~.error-message {
+        display: block;
+    }
 </style>
 <form id="custom-domain">
-	<h2>Spinnaker API URL</h2>
-	<p class="js-permission-api">
-		<input type="url" placeholder="https://pipeline-api.yourdomain.com" size="50" required id="custom-domain-origin">
-		<button type="submit">Change</button>
-	</p>
+    <h2>Spinnaker API URL</h2>
+    <p class="js-permission-api">
+        <input type="url" name="customDomainOrigin" placeholder="https://pipeline-api.yourdomain.com" size="50" required id="customDomainOrigin">
+        <button type="submit">Change</button>
+    </p>
 </form>
 <script src="browser-polyfill.min.js"></script>
 <script src="options.js"></script>
